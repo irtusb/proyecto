@@ -1,2 +1,3 @@
 *.bak
 !.gitingore
+sitio/sites/default/settings.php
