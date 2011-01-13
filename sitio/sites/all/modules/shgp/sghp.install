@@ -1,0 +1,188 @@
+<?php
+// $Id: sghp.install 49 2010-07-20 22:39:22Z irtusb $
+
+/**
+ * @file sghp.install
+ *    Funciones de instalaci&oacute;n para el m&oacute;doulo SGHP
+ */
+
+
+/**
+ * Implementaci&oacute;n de hook_install().
+ *
+ * Cuando se activa el m&oacute;dulo por primera vez, Drupal llama a esta
+ *    funci&oacute;n, la cual administra la creaci&oacute;n de tablas en la base
+ *    de datos y configuraciones iniciales.
+ */
+function sghp_install() {
+  // crear tablas
+  drupal_install_schema('sghp');
+  // crear roles 'Administrador SGHP', 'Jefe de Carrera', 'Académico'
+  $roles = array(
+    'Administrator SGHP' => 'na',
+    'Jefe de Carrera' => 'na',
+    'Académico' => 'na',
+  );
+  foreach ($roles as $nombre => $rid) {
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", $nombre);
+    // Query the database for the new rid, and replace 'na' with rid.
+    $roles[$nombre] = db_result(db_query("SELECT rid FROM {role} WHERE name = '%s'", $nombre));
+  }
+  // asignar permisos
+  $permisos = array(
+    'Administrador SGHP' => 'crear actividad, crear asignatura, generar reportes, gestión de mensajes',
+    'Jefe de Carrera' => 'crear actividad, crear asignatura, generar reportes, gestión de mensajes, ver horario',
+    'Académico' => 'crear actividad, gestión de mensajes, ver horario',
+  );
+  foreach ($roles as $nombre => $rid) {
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, '%s')", $roles[$nombre], $permisos[$nombre]);
+    // Query the database for the new rid, and replace 'na' with rid.
+  }
+  // copiar usuarios
+  $consulta = db_query("SELECT uid, name FROM {users}");
+  while($usuario = db_fetch_object($consulta)){
+    db_query("insert into {sghp_usuario} (idUsuario, nombre, apellido) values (%d, '%s', '%s')" ,
+      $usuario->uid, $usuario->name, ' ');
+  }
+}
+
+/**
+ * Implementaci&oacute;n del hook_schema().
+ *
+ * @return
+ *   Array con el esquema de la base de datos.
+ */
+function sghp_schema() {
+  /**
+   * Tabla sghp_usuario.
+   *
+   * Campos:
+   * - idUsuario: Identificador del usuario de SGHP, corresponde a un usuario de
+   *    Drupal (clave primaria).
+   * - nombre: Nombre del usuario de SGHP.
+   * - apellido: Apellido del usuario de SGHP.
+   */
+  $schema['sghp_usuario'] = array(
+    'description' => t('Contiene el nombre y el apellido de los usuario del sghp'),
+    'fields' => array(
+      'idUsuario' => array(
+        'description' => 'Identificador del usuario de SGHP, corresponde a un usuario de Drupal',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'nombre' => array(
+        'description' => 'Nombre del usuario de SGHP',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      'apellido' => array(
+        'description' => 'Apellido del usuario de SGHP',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('idUsuario'),
+  );
+  $schema['sghp_mensaje'] = array(
+    'description' => 'Colección de mensajes entre los usuarios de SGHP',
+    'fields' => array(
+      'idMensaje' => array(
+        'description' => 'Identificador del mensaje, usado al leer un mensaje específico',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
+      'de' => array(
+        'description' => 'ID del usuario que envía el mensaje',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'para' => array(
+        'description' => 'ID del usuario que recibe el mensaje',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'propietario' => array(
+        'description' => 'ID del usuario propietario del mensaje',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'asunto' => array(
+        'description' => 'Asunto o título del mensaje en cuestión.',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ),
+      'contenido' => array(
+        'description' => 'Contenido del mensaje',
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'leido' => array(
+        'description' => 'Valor booleano indicando si el mensaje fue leído o no (0 = no leído, 1 = leído)',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'fecha' => array(
+        'description' => 'Fecha de envío del mensaje',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('idMensaje'),
+  );
+
+
+  $schema['sghp_bloque'] = array(
+    'description' => 'Contiene cada una de las actividades registradas para los usuarios',
+    'fields' => array(
+      /* Próximamente usado para eliminar y modificar los bloques */
+      'idBloque' => array(
+        'description' => 'Identificador del bloque',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
+      'idUsuario' => array(
+        'description' => 'Usuario al que está asignado el bloque',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      /* Próximamente agregar un campo 'descripción' (no está en el modelo) */
+      'nombre' => array(
+        'description' => 'Descripción del bloque',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      /* De momento sólo se usan los valores de Lunes a Viernes, pero
+      * podría aceptarse de Lunes a Domingo */
+      'dia' => array(
+        'description' => 'Día de la semana (1 = Lunes, 5 = Viernes)',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      /* Los valores van de 1 a 8 */
+      'numero' => array(
+        'description' => 'Número del bloque dentro de un mismo día',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'tipo' => array(
+        'description' => 'Tipo de bloque. Puede ser "actividad" o "asignatura"',
+        'type' => 'varchar',
+        'length' => '50',
+        'not null' => TRUE,
+        'default' => 'actividad',
+      ),
+    ),
+    'primary key' => array('idBloque'),
+    'indexes' => array(
+      'idUsuario' => array('idUsuario'),
+    ),
+  );
+  return $schema;
+}
+

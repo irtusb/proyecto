@@ -1,0 +1,26 @@
+
+
+/**
+ * Requerimientos
+ */
+
+ - Drupal versión 6.x (http://drupal.org)
+
+
+/**
+ * Instalación
+ */
+
+Copie el directorio "sghp" con los ficheros del sistema al directorio /sites/all/modules de la raíz de la instalación de Drupal. Si el directorio modules no existe créelo usted mismo.
+
+Active el módulo SGHP desde la interfaz de administración de módulos de Drupal en Administrar > Construcción del sitio > Módulos
+
+/**
+ * Post instalación
+ */
+Administración de permisos
+
+Una vez instalado el sistema deberá asignar los roles a los usuarios existentes en su instalación de Drupal. Esto se hace en Administrar > Administración de usuario > Usuario seleccionando Editar para cada uno de los usuarios.
+
+Para poder realizar estos cambios debe ingresar con una cuenta con permiso administrar usuarios y administrar permisos (si desea tener un control más fino sobre los accesos de cada uno de lo roles definidos por el sistema).
+

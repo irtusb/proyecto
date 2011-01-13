@@ -1,0 +1,5 @@
+; $Id$
+name = SGHP
+description = Sistema de gestión de horarios de profesores
+version = 6.x-1.0
+core = 6.x

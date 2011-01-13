@@ -1,0 +1,138 @@
+<?php
+// $Id$
+
+/**
+ * @file sghp.module
+ *    Implementa la interfaz que relaciona el Sistema Gesti&oacute;n de Horarios
+ *    de Profesores con el sistema gestor de contenidos Drupal.
+ *
+ * Este m&oacute;dulo est&aacute; desarrollado para la versi&oacute;n 6.x de
+ *    Drupal.
+ */
+
+/**
+ * Implementaci&oacute;n de hook_perm().
+ *
+ * Define cu&aacute;les son los permisos con los que cuentan
+ *    los usuarios del m&oacute;dulo. Se utiliza para restringir el acceso a las
+ *    diferentes funciones que proporciona SGHP.
+ * @return
+ *    Lista con los permisos:
+ *    - 'gesti&oacute;n de mensajes': Permite al usuario acceder al sistema de
+ *      mensajer&iacute;a interna de SGHP.
+ *    - 'ver horarios': Permite al usuario ver el horario que se le ha asignado.
+ *    - 'administrar horarios': Permite al usuario asignar nuevos bloques con
+ *      actividades a cualquier usuario.
+ *    - 'otros': Permite al usuario acceder al sistema de reportes (no
+ *      implementado todav&iacute;a).
+ *
+ */
+function sghp_perm(){
+  return array(
+    'gestión de mensajes',
+    'ver horario',
+    'crear asignatura',
+    'crear actividad',
+    'generar reportes',
+  );
+}
+
+
+/**
+ * Implementaci&oacute;n de hook_menu().
+ *
+ * Crea el mapa de los v&iacute;nculos usados por el m&oacute;dulo y les asigna
+ *    la funci&oacute;n a llamar. Dependiendo de los permisos que tenga el
+ *    usuario ser&aacute;n las diferentes opciones que estar&aacute;n visibles
+ *    para el usuario.
+ *
+ * @return
+ *    Arreglo asociativo con los &iacute;tems del men&uacute;.
+ */
+function sghp_menu(){
+  $items['sghp'] = array(
+    'title' => 'SGHP',
+    'description' => 'Sistema Gestión de Horarios',
+    'page callback' => 'Interfaz::screen',
+    'access arguments' => array('gestión de mensajes'),
+    'file' => 'sghpMain.php',
+  );
+  
+  // Sección mensajería interna
+  $items['sghp/mensaje'] = array(
+    'title' => 'Mensajería interna',
+    'page callback' => 'sghpMensaje',
+    'page arguments' => array('lista'),
+    'access arguments' => array('gestión de mensajes'),
+    'file' => 'mensaje.php',
+  );
+  $items['sghp/mensaje/lista'] = array(
+    'title' => 'Recibidos',
+    'weight' => 10,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['sghp/mensaje/nuevo'] = array(
+    'title' => 'Componer',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sghpMensajeNuevo'),
+    'access arguments' => array('gestión de mensajes'),
+    'weight' => 20,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'mensaje.php',
+  );
+  $items['sghp/mensaje/leer/%'] = array(
+    'title' => 'Leer mensaje',
+    'page callback' => 'sghpMensaje',
+    'page arguments' => array('leer', 3),
+    'access arguments' => array('gestión de mensajes'),
+    'file' => 'mensaje.php',
+    'type' => MENU_CALLBACK,
+  );
+  $items['sghp/mensaje/borrar/%'] = array(
+    'title' => 'Eliminar mensaje',
+    'page callback' => 'sghpMensaje',
+    'page arguments' => array('eliminar', 3),
+    'access arguments' => array('gestión de mensajes'),
+    'file' => 'mensaje.php',
+    'type' => MENU_CALLBACK,
+  );
+  
+  // Sección horarios
+  $items['sghp/horarios'] = array(
+    'title' => 'Horario',
+    'page callback' => 'sghpHorarioVer',
+    'access arguments' => array('ver horario'),
+    'file' => 'horarios.php',
+  );
+  $items['sghp/horarios/lista'] = array(
+    'title' => 'Mi Horario',
+    'weight' => -10,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['sghp/horarios/nuevoAct'] = array(
+    'title' => 'Nueva Actividad',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sghpNuevaActividad'),
+    'access arguments' => array('crear actividad'),
+    'file' => 'horarios.php',
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['sghp/horarios/nuevoAsig'] = array(
+    'title' => 'Nueva Asignatura',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('sghpNuevaAsignatura'),
+    'access arguments' => array('crear asignatura'),
+    'file' => 'horarios.php',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  // Sección reporte
+  $items['sghp/reportes'] = array(
+    'title' => 'Reportes',
+    'page callback' => 'sghpReporte',
+    'access arguments' => array('generar reportes'),
+    'file' => 'reporte.php',
+  );
+  return $items;
+}
+
