@@ -1,0 +1,84 @@
+Nota: crear página incluye el crear el item menú correspondiente
+
+modificar la página personal de cada usuario para que acepte los nuevos datos 
+    que usa el proyecto
+modificar la base de datos para que acepte los cambios en usuario
+
+modificar la base de datos para guardar el horario personal
+crear una pagina y menu que muestre el horario personal
+modificar esta página ^^ para que permita modificar el horario personal
+
+crear página para mostrar la lista de los grupos a los que se pertenece 
+    actualmente
+crear página para enviar solicitud/unirse a un grupo
+crear una página para mostrar el horario grupal
+
+crear función que recomiende un bloque específico
+crear función que fije un bloque 
+crear una función para traspasar el mando del grupo
+
+crear página para buscar un grupo
+añadir autocompletar con los nombres de los grupos (usando el autocompletar de 
+    drupal)
+crear página para administrar los usuarios a un grupo (añadir/invitar/borrar)
+
+
+crear una página para el "administrador" que pueda 
+* crear, ver, modificar, eliminar grupos
+* ajustar sin confirmación a los integrantes de un grupo (sólo casos extremos)
+
+Base de datos
+- usuario
+  * nombre
+  * contraseña
+  * email
+  * dirección
+  * teléfono        
+- bloque
+  * nombre actividad
+  * prioridad
+  * día
+  * numbloque
+  * usuario
+- grupo de trabajo
+  * nombre de grupo (trabajo)
+  * descripción (objetivo)
+  * creador
+  * cantidad de usuarios (calculado, cacheado)
+  * tipo (abierto: no pide confirmación de ninguna parte/cerrado: pide 
+        confirmación del creador)    
+- usuario/grupo
+  * usuario
+  * grupo
+- avisos (la lista de los mensajes en los que participa el usuario)
+  * Confirmación de la inclusión en un grupo
+  * Exclusión de grupo
+  * fijación de horario
+  * Mensajes grupales    
+- solicitud del usuario al grupo
+  * grupo
+  * usuario
+  * mensaje
+
+Opciones personales
+* aceptar inclusión a grupos que yo no he pedido
+* permitir que el mundo/amigos vea mi horario 
+*   mostrar cada bloque como ocupado (la linda X)
+*   mostrar la actividad que hay en cada bloque
+
+opciones Globales
+* CANTIDAD Y TAMAÑO DE BLOQUES
+* cantidad mínima de bloques disponibles (quedan cero o muy pocos bloques 
+      disponibles)
+* un máximo también podría ser
+* cantidad de prioridades disponibles
+* color de cada prioridad (podría ser por fórmula)
+
+permisos directamente en drupal (lo de administrar grupo es aparte)
+* acceder a horario personal
+* acceder a horario grupal
+* modificar horario personal
+* acceder a grupos (ver lista, entrar, salir, (?))
+
+Sobre la privacidad: El usuario acepta que se pueden compartir datos personales 
+    a otros usuarios del sitio
