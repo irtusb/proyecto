@@ -1,7 +1,7 @@
 Nota: crear página incluye el crear el item menú correspondiente
 
 modificar la página personal de cada usuario para que acepte los nuevos datos 
-    que usa el proyecto
+    que usa el proyecto. -> Muy complicado, mejor crear una página que haga esto.
 modificar la base de datos para que acepte los cambios en usuario
 
 modificar la base de datos para guardar el horario personal

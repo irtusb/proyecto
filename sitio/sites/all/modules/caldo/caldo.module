@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Display help and module information
@@ -18,17 +17,18 @@ function caldo_help($path, $arg) {
 }
 
 /**
- * Implementación de hook_menu()
- * Hay muchas opciones disponibles para cada elemento del arreglo
+ * Implementación de hook_menu().
  * @return menú en forma de arreglo php
 */
 function caldo_menu(){
+/*
   $items['caldo'] = array(
     'title' => 'Este es un menu', // el título
     'access arguments' => array(1), // todos tienen acceso a ver este menú
-    'page callback' => 'caldoHorarioPersonal',  // la función a llamar
-    'file' => 'vistas.php', // el archivo donde está esa función
+    'page callback' => 'caldo_vista1',  // la función a llamar
+    'file' => 'vistas.php'
   );
   
   return $items;
+*/
 }
