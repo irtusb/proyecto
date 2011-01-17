@@ -1,5 +1,5 @@
 ; $Id$
-name = Proyecto
+name = caldo
 description = Coordina horarios de grupos de personas para facilitar la b&uacute;squeda de bloques horarios disponibles
 version = 6.x-0.1
 core = 6.x

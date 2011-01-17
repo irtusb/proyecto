@@ -21,14 +21,14 @@ function caldo_help($path, $arg) {
  * @return menú en forma de arreglo php
 */
 function caldo_menu(){
-/*
   $items['caldo'] = array(
-    'title' => 'Este es un menu', // el título
+    'title' => 'Settings', // el título
+    'title callback' => 't',
     'access arguments' => array(1), // todos tienen acceso a ver este menú
-    'page callback' => 'caldo_vista1',  // la función a llamar
-    'file' => 'vistas.php'
+    'page callback' => 'drupal_get_form',  // la función a llamar
+    'page arguments' => array('caldo_opciones'),
+    'file' => 'vistas.php',
   );
   
   return $items;
-*/
 }
